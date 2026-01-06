@@ -1,0 +1,146 @@
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f3f8; /* softer background */
+  color: #2c2c2c;
+  line-height: 1.6;
+  padding: 20px;
+}
+
+/* Header styling */
+header {
+  background-color: #bbdefb; /* Light blue background */
+  color: #0d47a1;            /* Dark blue text */
+  padding: 24px 16px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(13, 71, 161, 0.08); /* Light blue shadow */
+}
+
+header h1 {
+  font-size: 28px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+
+/* Navigation bar */
+nav {
+  margin-top: 20px;
+  text-align: center;
+}
+
+nav button {
+  margin: 6px 8px;
+  padding: 10px 20px;
+  background-color: #ede7f6; /* light purple */
+  color: #512da8;
+  border: 1px solid #b39ddb;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+nav button:hover {
+  background-color: #512da8;
+  color: white;
+}
+
+/* Sections */
+.section {
+  display: none;
+  padding: 40px 30px;
+}
+
+/* Section headings */
+.section h2 {
+  margin-bottom: 25px;
+  color: #4527a0;
+  font-size: 24px;
+}
+
+/* Table styles */
+table {
+  width: 100%;
+  background-color: white;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.07);
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 14px 18px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+th {
+  background-color: #ede7f6;
+  color: #4a148c;
+  font-weight: 700;
+}
+
+td button.action {
+  background-color: #e8eaf6;
+  border: none;
+  padding: 8px 14px;
+  margin-right: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #3949ab;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+td button.action:hover {
+  background-color: #5c6bc0;
+  color: white;
+}
+
+/* Category input styles */
+#categories input[type="text"] {
+  padding: 12px;
+  width: 320px;
+  border: 1px solid #b0bec5;
+  border-radius: 8px;
+  margin-right: 12px;
+  background-color: #fafafa;
+}
+
+#categories button {
+  padding: 12px 18px;
+  background-color: #7e57c2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s ease;
+}
+
+#categories button:hover {
+  background-color: #5e35b1;
+}
+
+/* Category list styles */
+#categoryList {
+  margin-top: 20px;
+  list-style: none;
+}
+
+#categoryList li {
+  background: #ffffff;
+  margin-bottom: 10px;
+  padding: 18px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  color: #333;
+}
