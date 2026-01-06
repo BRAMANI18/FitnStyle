@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Shopping Cart</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #e6f2ff, #f0f8ff);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #34495e;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white; /* Keep the emoji white */
+}
+
+.brand-name {
+  color: #74ebd5; /* Apply brand color only to text */
+}
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #34495e;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            gap: 20px;
+        }
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        .cart-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .item-details {
+            flex-grow: 1;
+        }
+        .item-details h3 {
+            margin: 0 0 5px 0;
+            color: #e91e63;
+            font-size: 1.2rem;
+        }
+        .item-details p {
+            margin: 0;
+            color: #555;
+            font-size: 0.95rem;
+        }
+        .item-price {
+            font-weight: bold;
+            color: #2e8b57;
+            font-size: 1.1rem;
+            white-space: nowrap; /* Keep price on one line */
+        }
+        .item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .item-quantity input {
+            width: 50px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .item-quantity button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .item-quantity button:hover {
+            background-color: #2980b9;
+        }
+        .remove-button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .remove-button:hover {
+            background-color: #d32f2f;
+        }
+        .cart-summary {
+            text-align: right;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+        .cart-summary p {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #333;
+        }
+        .cart-summary span {
+            color: #e91e63;
+        }
+        .checkout-button {
+            background-color: #2e8b57;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        .checkout-button:hover {
+            background-color: #256e46;
+        }
+        .empty-cart {
+            text-align: center;
+            padding: 50px;
+            color: #777;
+            font-size: 1.1rem;
+        }
+        .back-button {
+            display: block;
+            margin-top: 30px;
+            text-align: center;
+            color: #2196F3;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-button:hover {
+            text-decoration: underline;
+        }
+        /* Style for when customer is not logged in */
+        .not-logged-in {
+            text-align: center;
+            padding: 50px;
+            color: #cc0000;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .login-link {
+            color: #2196F3;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .login-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+  <div class="logo">🛒 <span class="brand-name">FIT AND STYLE</span></div>
+</header>
+
+    <div class="container">
+        <h1>Your Shopping Cart</h1>
+        <div id="cartItems">
+            </div>
+        <div class="cart-summary">
+            <p>Total: <span id="cartTotal">$0.00</span></p>
+            <button class="checkout-button" onclick="checkout()">Proceed to Checkout</button>
+        </div>
+        <a href="multy.html" class="back-button">Continue Shopping</a>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000/api/cart'; 
+
+        let CUSTOMER_ID = null; // Initialize to null
+
+        // Function to get the customer ID from localStorage
+        function getCustomerId() {
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            if (loggedInUser) {
+                try {
+                    const user = JSON.parse(loggedInUser);
+                    
+                    // --- THE CRITICAL UPDATE IS HERE ---
+                    // Check if _id is an object with an $oid property
+                    if (user._id && typeof user._id === 'object' && user._id.$oid) {
+                        return user._id.$oid; // Extract the string value from $oid
+                    } else if (typeof user._id === 'string') {
+                        // Fallback for if _id is already a direct string (e.g., if backend changes)
+                        return user._id;
+                    }
+                    
+                    console.warn("loggedInUser found, but _id is not in expected format (object with $oid or direct string).");
+                    return null; // _id found but not in expected format
+                } catch (e) {
+                    console.error("Error parsing loggedInUser from localStorage:", e);
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        async function fetchCart() {
+            CUSTOMER_ID = getCustomerId(); // Set CUSTOMER_ID when fetching cart
+
+            const cartItemsContainer = document.getElementById('cartItems');
+            const cartTotalElement = document.getElementById('cartTotal');
+
+            // Handle not logged in state
+            if (!CUSTOMER_ID) {
+                cartItemsContainer.innerHTML = `
+                    <p class="not-logged-in">
+                        You are not logged in. Please <a href="customerloginpage.html" class="login-link">log in</a> to view your cart.
+                    </p>
+                `;
+                cartTotalElement.textContent = '$0.00';
+                document.querySelector('.checkout-button').disabled = true; // Disable checkout
+                return null; // Return null as there's no cart to fetch
+            }
+
+            document.querySelector('.checkout-button').disabled = false; // Enable checkout if customer is logged in
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/${CUSTOMER_ID}`); 
+                
+                // If cart is not found for this customer, it's an empty cart
+                if (response.status === 404) {
+                    return { items: [] }; // Return an empty cart object
+                }
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const cart = await response.json();
+                return cart;
+            } catch (error) {
+                console.error('Error fetching cart:', error);
+                // Display a user-friendly error message if the API call fails
+                cartItemsContainer.innerHTML = `<p class="empty-cart">Failed to load cart. Please try again later.</p>`;
+                cartTotalElement.textContent = '$0.00';
+                return null;
+            }
+        }
+
+        async function renderCart() {
+            const cartItemsContainer = document.getElementById('cartItems');
+            const cartTotalElement = document.getElementById('cartTotal');
+            let total = 0;
+
+            cartItemsContainer.innerHTML = ''; // Clear existing items
+
+            const cart = await fetchCart(); 
+
+            // If fetchCart returns null (e.g., not logged in, or severe API error)
+            // or cart is genuinely empty
+            if (!cart || !cart.items || cart.items.length === 0) {
+                // Only show "Your cart is empty" if a customer is logged in
+                // The "not-logged-in" message handles the other case
+                if (CUSTOMER_ID) { 
+                    cartItemsContainer.innerHTML = '<p class="empty-cart">Your cart is empty.</p>';
+                }
+                cartTotalElement.textContent = '$0.00';
+                return;
+            }
+
+            cart.items.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.classList.add('cart-item');
+
+                // Ensure product data is available (populated by the backend)
+                // If productId is not populated, these will fall back to default values
+                const productName = item.productId ? item.productId.name : 'Unknown Product';
+                const productDescription = item.productId ? item.productId.description : 'N/A';
+                const productCategory = item.productId ? item.productId.category : 'N/A';
+                const productPrice = item.productId ? item.productId.price : 0;
+                const productImage = item.productId && item.productId.imageData ? item.productId.imageData : 'https://via.placeholder.com/80?text=No+Img';
+                const itemSize = item.size ? `Size: ${item.size}` : 'Size: N/A'; // <--- ADDED LINE FOR SIZE
+
+                const itemSubtotal = (productPrice * item.quantity);
+                total += itemSubtotal;
+
+                itemDiv.innerHTML = `
+                    <img src="${productImage}" alt="${productName}">
+                    <div class="item-details">
+                        <h3>${productName}</h3>
+                        <p>Category: ${productCategory}</p>
+                        <p>Description: ${productDescription}</p>
+                        <p>${itemSize}</p> </div>
+                    <div class="item-quantity">
+                        <button onclick="updateQuantity('${item.productId._id}', -1)">-</button>
+                        <input type="number" value="${item.quantity}" min="1" onchange="manualUpdateQuantity('${item.productId._id}', this.value)">
+                        <button onclick="updateQuantity('${item.productId._id}', 1)">+</button>
+                    </div>
+                    <p class="item-price">$${itemSubtotal.toFixed(2)}</p>
+                    <button class="remove-button" onclick="removeFromCart('${item.productId._id}')">Remove</button>
+                `;
+                cartItemsContainer.appendChild(itemDiv);
+            });
+
+            cartTotalElement.textContent = `$${total.toFixed(2)}`;
+        }
+
+        async function updateQuantity(productId, change) {
+            const currentCustomerId = getCustomerId(); 
+            if (!currentCustomerId) {
+                alert('Please log in to update your cart.');
+                window.location.href = 'customerloginpage.html'; 
+                return;
+            }
+
+            try {
+                const currentCart = await fetchCart();
+                if (!currentCart || !currentCart.items) {
+                    console.error('Cart not found or items array is missing to update quantity.');
+                    return;
+                }
+
+                const itemToUpdate = currentCart.items.find(item => item.productId._id === productId);
+                if (!itemToUpdate) {
+                    console.error('Item not found in cart.');
+                    return;
+                }
+
+                let newQuantity = itemToUpdate.quantity + change;
+                if (newQuantity < 0) newQuantity = 0; 
+
+                if (newQuantity === 0) {
+                    await removeFromCart(productId); 
+                    return;
+                }
+
+                const response = await fetch(`${API_BASE_URL}/${currentCustomerId}/item/${productId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ quantity: newQuantity }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                renderCart(); 
+            } catch (error) {
+                console.error('Error updating quantity:', error);
+                alert('Failed to update quantity. Please try again.');
+            }
+        }
+
+        async function manualUpdateQuantity(productId, value) {
+            const currentCustomerId = getCustomerId(); 
+            if (!currentCustomerId) {
+                alert('Please log in to update your cart.');
+                window.location.href = 'customerloginpage.html'; 
+                return;
+            }
+
+            const newQuantity = parseInt(value);
+            if (!isNaN(newQuantity)) {
+                if (newQuantity <= 0) {
+                    await removeFromCart(productId);
+                } else {
+                    try {
+                        const response = await fetch(`${API_BASE_URL}/${currentCustomerId}/item/${productId}`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ quantity: newQuantity }),
+                        });
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        renderCart();
+                    } catch (error) {
+                        console.error('Error manually updating quantity:', error);
+                        alert('Failed to update quantity. Please try again.');
+                    }
+                }
+            }
+        }
+
+        async function removeFromCart(productId) {
+            const currentCustomerId = getCustomerId(); 
+            if (!currentCustomerId) {
+                alert('Please log in to remove items from your cart.');
+                window.location.href = 'customerloginpage.html'; 
+                return;
+            }
+
+            if (confirm('Are you sure you want to remove this item from your cart?')) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/${currentCustomerId}/item/${productId}`, {
+                        method: 'DELETE',
+                    });
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    renderCart(); 
+                } catch (error) {
+                    console.error('Error removing item:', error);
+                    alert('Failed to remove item. Please try again.');
+                }
+            }
+        }
+
+        async function checkout() {
+            const currentCustomerId = getCustomerId(); 
+            if (!currentCustomerId) {
+                alert('Please log in to proceed to checkout.');
+                window.location.href = 'customerloginpage.html'; 
+                return;
+            }
+
+            const cart = await fetchCart();
+            if (cart && cart.items && cart.items.length > 0) {
+                alert('Proceeding to checkout! (This is a placeholder for actual payment processing.)');
+                try {
+                    const response = await fetch(`${API_BASE_URL}/${currentCustomerId}/clear`, { 
+                        method: 'DELETE'
+                    });
+                    if (!response.ok) {
+                        throw new Error(`Failed to clear cart after checkout: ${response.status}`);
+                    }
+                } catch (error) {
+                    console.error("Error clearing cart after checkout:", error);
+                }
+                renderCart(); 
+            } else {
+                alert('Your cart is empty. Add some items first!');
+            }
+        }
+
+        // Load cart when the page loads
+        window.addEventListener('load', renderCart);
+    </script>
+</body>
+</html>

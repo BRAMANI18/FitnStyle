@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Multi-Vendor Shop</title>
+  <style>
+    /* General styles */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #f0f8ff, #e6f2ff); /* Light professional gradient */
+      overflow-y: scroll;
+      scroll-behavior: smooth;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background-color: #34495e;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .nav-links a,
+    .auth-links a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #f6f3f3;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover,
+    .auth-links a:hover {
+      color: #f0c674;
+    }
+
+    .auth-links a {
+      font-weight: bold;
+      color: #e5eaf0;
+    }
+
+    /* Hero section */
+    .hero-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 50px;
+      flex-wrap: wrap;
+      min-height: 40vh;
+    }
+
+    .hero-text {
+      flex: 1;
+      max-width: 600px;
+    }
+
+    .hero-text h1 {
+      font-size: 2rem;
+      color: #1f3933;
+    }
+
+    .highlight {
+      color: #2e8b57;
+      font-weight: bold;
+    }
+
+    .hero-text p {
+      margin: 20px 0;
+      font-size: 1.1rem;
+    }
+
+    .hero-text input {
+      padding: 10px;
+      margin-right: 10px;
+      width: 250px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .hero-text button {
+      padding: 10px 20px;
+      background-color: #2e8b57;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .hero-text button:hover {
+      background-color: #256e46;
+    }
+
+    .hero-image {
+      flex: 1;
+      text-align: center;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .hero-image img {
+      max-width: 80%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      transition: transform 0.4s ease, box-shadow 0.3s ease;
+    }
+
+    .hero-image img:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    @media (max-width: 768px) {
+      .hero-section {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .hero-text input {
+        width: 80%;
+        margin-bottom: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="logo">🛒 FIT AND STYLE</div>
+    <nav class="nav-links">
+      <a href="#">Category</a>
+      <a href="#">About Us</a>
+      <a href="#">Contact Us</a>
+    </nav>
+    <div class="auth-links">
+      <a href="#">ADD PRODUCTS</a>
+      <a href="#">VIEW PRODUCTS</a>
+      <a href="customerloginpage.html">Login</a>
+      
+
+    </div>
+  </header>
+
+  <main class="hero-section">
+    <div class="hero-text">
+      <h1>
+        Elevate commerce, connect sellers, and satisfy buyers on our versatile<br />
+        <span class="highlight">E-commerce platform.</span>
+      </h1>
+      <p>Buy, Sell, Thrive Together.</p>
+      
+    <div class="hero-image">
+      <img src="wom2.jpeg" alt="E-commerce Illustration" />
+    </div>
+  </main>
+
+ 
+
+  
+</body>
+</html>

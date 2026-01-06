@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Multi-Vendor Shop</title>
+  <style>
+    /* General styles */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #f0f8ff, #e6f2ff); /* Light professional gradient */
+      overflow-y: scroll;
+      scroll-behavior: smooth;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background-color: #34495e;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Added box-shadow for a sticky effect */
+      flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    }
+
+    .logo {
+      font-size: 1.8rem; /* Adjusted for better visibility */
+      font-weight: bold;
+      color: #74ebd5; /* A bright, contrasting color */
+    }
+
+    .nav-links a,
+    .auth-links a {
+      color: white;
+      text-decoration: none;
+      margin-left: 25px; /* Adjusted margin */
+      font-size: 1rem;
+      transition: color 0.3s ease-in-out;
+      white-space: nowrap; /* Prevent links from breaking */
+    }
+
+    .nav-links a:hover,
+    .auth-links a:hover {
+      color: #74ebd5; /* Highlight color on hover */
+    }
+
+    /* Hero Section */
+    .hero-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 50px;
+      flex-wrap: wrap;
+      min-height: 40vh;
+    }
+
+    .hero-text {
+      flex: 1;
+      max-width: 600px;
+    }
+
+    .hero-text h1 {
+      font-size: 2rem;
+      color: #1f3933;
+    }
+
+    .highlight {
+      color: #2e8b57;
+      font-weight: bold;
+    }
+    
+    .hero-text .highlight {
+      color: #e91e63; /* Pink highlight */
+      font-weight: bold;
+    }
+
+    .hero-text p {
+      font-size: 1.2rem; /* Adjusted font size */
+      color: #555;
+      margin-bottom: 30px;
+    }
+
+    .hero-text input {
+      padding: 12px 20px; /* Adjusted padding */
+      border: 2px solid #ccc; /* Adjusted border */
+      border-radius: 25px; /* Adjusted border-radius */
+      font-size: 1rem;
+      width: 70%;
+      max-width: 350px;
+      margin-right: 10px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .hero-text input:focus {
+      border-color: #e91e63; /* Focus color */
+    }
+
+    .hero-text button {
+      padding: 12px 25px; /* Adjusted padding */
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      border-radius: 25px; /* Adjusted border-radius */
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .hero-text button:hover {
+      background-color: #d81b60;
+    }
+
+    .hero-image {
+      flex: 1; /* Ensure it takes available space */
+      text-align: center;
+    }
+
+    .hero-image img {
+      max-width: 600px; /* Adjusted max-width */
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: transform 0.4s ease, box-shadow 0.3s ease; /* Ensure transitions are here */
+    }
+
+    .hero-image img:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Responsive adjustments for header */
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        text-align: center;
+        padding: 15px 20px;
+      }
+      .nav-links, .auth-links {
+        margin-top: 15px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+      }
+      .nav-links a, .auth-links a {
+        margin: 0 10px;
+      }
+      .hero-section {
+        flex-direction: column-reverse; /* Image on top, text below */
+        padding: 40px 20px;
+      }
+      .hero-text h1 {
+        font-size: 2rem;
+      }
+      .hero-text p {
+        font-size: 1rem;
+      }
+      .hero-text input, .hero-text button {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+      }
+      .hero-image img {
+        max-width: 80%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header {
+        padding: 10px 15px;
+      }
+      .logo {
+        font-size: 1.5rem;
+      }
+      .nav-links a, .auth-links a {
+        font-size: 0.9rem;
+        margin: 0 5px;
+      }
+      .hero-text h1 {
+        font-size: 1.8rem;
+      }
+    }
+
+    /* Product Display Section - NEW CSS */
+    .products-section {
+      padding: 50px;
+      text-align: center;
+    }
+
+    .products-section h2 {
+      font-size: 2rem;
+      color: #1f3933;
+      margin-bottom: 30px;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .product-card {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      padding: 20px;
+      text-align: left;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex; /* Added for layout within card */
+      flex-direction: column; /* Stack content vertically */
+      justify-content: space-between; /* Push buttons to the bottom */
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .product-card img {
+      max-width: 100%;
+      height: 200px; /* Fixed height for consistency */
+      object-fit: contain; /* Ensures image is fully visible, may add blank space */
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .product-card h3 {
+      font-size: 1.3rem;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .product-card p {
+      font-size: 0.95rem;
+      color: #666;
+      margin-bottom: 8px;
+      flex-grow: 1; /* Allow description to take up available space */
+    }
+
+    .product-card .price {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #2e8b57;
+      margin-top: 15px;
+      margin-bottom: 15px; /* Space before buttons */
+    }
+
+    .buttons-container {
+      display: flex;
+      flex-direction: column; /* Stack buttons vertically */
+      gap: 10px;
+      margin-top: auto; /* Push buttons to the bottom of the card */
+    }
+
+    .buttons-container button {
+      background-color: #e91e63; /* Add to Cart button color */
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.3s ease;
+      width: 100%; /* Make buttons full width within their container */
+    }
+
+    .buttons-container button:hover {
+      background-color: #d81b60;
+    }
+
+    .buttons-container button.virtual-try-on {
+      background-color: #2196F3; /* A different color for try-on */
+    }
+
+    .buttons-container button.virtual-try-on:hover {
+      background-color: #1976D2;
+    }
+
+    /* Styles for Size Buttons */
+    .size-selection-container {
+        margin-top: 10px;
+        margin-bottom: 15px;
+        text-align: left; /* Align label and buttons to the left */
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start; /* Align items to the start of the container */
+    }
+
+    .size-selection-container label {
+        display: block;
+        font-size: 0.9rem;
+        color: #555;
+        margin-bottom: 5px;
+    }
+
+    .size-buttons {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 10px;
+    }
+
+    .size-button {
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        background-color: white;
+        color: #333;
+        transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    }
+
+    .size-button:hover {
+        border-color: #e91e63;
+    }
+
+    .size-button.selected {
+        background-color: #e91e63;
+        color: white;
+        border-color: #e91e63;
+    }
+
+    .size-chart-button {
+        background-color: #f4a261; /* Example color */
+        color: white;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.75rem;
+        transition: background-color 0.3s ease;
+        margin-left: 0; /* Remove margin-left here as it's separate */
+    }
+
+    .size-chart-button:hover {
+        background-color: #e76f51;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="logo">🛒 FIT AND STYLE</div>
+    
+    <div class="auth-links">
+      <a href="sellerreg.html">Register Seller</a>
+      <a href="sellerloginpage.html">Login Seller</a>
+      <a href="customerreg.html">Register Customer</a>
+      <a href="customerloginpage.html">Login User</a>
+      <a href="admin/adminloginpage.html">Admin</a>
+      <a href="cart.html" style="background-color:#4CAF50; padding: 8px 15px; border-radius: 5px; color: white;">View Cart</a>
+    </div>
+  </header>
+
+  <main class="hero-section">
+    <div class="hero-text">
+      <h1>
+        Elevate commerce, connect sellers, and satisfy buyers on our versatile<br />
+        <span class="highlight">E-commerce platform.</span>
+      </h1>
+      <p>Buy, Sell, Thrive Together.</p>
+      <input type="text" placeholder="Enter Product Name..." id="searchInput" />
+      <button onclick="searchProduct()">Search</button>
+    </div>
+    <div class="hero-image">
+      <img src="wom2.jpeg" alt="E-commerce Illustration" />
+    </div>
+  </main>
+
+  <section class="products-section">
+    <h2>Available Products</h2>
+    <div class="product-grid" id="productGrid">
+      </div>
+  </section>
+
+  <script>
+    let products = [];
+    const API_BASE_URL = 'http://localhost:5000'; // Base URL for your backend API
+
+    // Helper function to get customer ID (copied from cart.html for consistency)
+    function getCustomerId() {
+        const loggedInUser = localStorage.getItem('loggedInUser');
+        if (loggedInUser) {
+            try {
+                const user = JSON.parse(loggedInUser);
+                // Check if _id is an object with an $oid property (typical for Mongoose _id converted to JSON)
+                if (user._id && typeof user._id === 'object' && user._id.$oid) {
+                    return user._id.$oid; // Extract the string value from $oid
+                } else if (typeof user._id === 'string') {
+                    // Fallback for if _id is already a direct string
+                    return user._id;
+                }
+                console.warn("loggedInUser found, but _id is not in expected format (object with $oid or direct string).");
+                return null;
+            } catch (e) {
+                console.error("Error parsing loggedInUser from localStorage:", e);
+                return null;
+            }
+        }
+        return null;
+    }
+
+    // Function to set up the size buttons for a given product card
+    function setupSizeButtons(productId) {
+        // Use querySelector to find the specific product card that contains the buttons
+        const productCard = document.querySelector(`.product-card:has(#selected-size-${productId})`);
+        if (!productCard) return;
+
+        const sizeButtons = productCard.querySelectorAll('.size-button');
+        const selectedSizeInput = productCard.querySelector(`#selected-size-${productId}`);
+
+        sizeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Deselect all other buttons in the group for this product card
+                sizeButtons.forEach(btn => btn.classList.remove('selected'));
+                // Select the clicked button
+                this.classList.add('selected');
+                // Update the hidden input value
+                selectedSizeInput.value = this.dataset.size;
+            });
+        });
+    }
+
+    async function loadProducts() {
+        const productGrid = document.getElementById('productGrid');
+        productGrid.innerHTML = 'Loading products...';
+
+        try {
+            // Fetch products from your backend product API
+            const response = await fetch(`${API_BASE_URL}/api/products`);
+            if (!response.ok) throw new Error('Failed to fetch products');
+            products = await response.json();
+
+            if (products.length === 0) {
+                productGrid.innerHTML = '<p>No products available yet. Be the first to add one!</p>';
+                return;
+            }
+
+            productGrid.innerHTML = '';
+            products.forEach((product) => {
+                const productCard = document.createElement('div');
+                productCard.classList.add('product-card');
+
+                const imageUrl = product.imageData || 'https://via.placeholder.com/200?text=No+Image';
+
+                productCard.innerHTML = `
+                    <img src="${imageUrl}" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <p>Category: ${product.category || 'N/A'}</p>
+                    <p>${product.description || 'No description provided.'}</p>
+                    <p class="price">$${parseFloat(product.price).toFixed(2)}</p>
+                    <div class="size-selection-container">
+                        <label>Select Size:</label>
+                        <div class="size-buttons">
+                            <button type="button" class="size-button" data-size="XS">XS</button>
+                            <button type="button" class="size-button" data-size="S">S</button>
+                            <button type="button" class="size-button" data-size="M">M</button>
+                            <button type="button" class="size-button" data-size="L">L</button>
+                            <button type="button" class="size-button" data-size="XL">XL</button>
+                            <button type="button" class="size-button" data-size="XXL">XXL</button>
+                        </div>
+                        <button type="button" class="size-chart-button" onclick="openSizeChart()">Size Chart</button>
+                        <input type="hidden" id="selected-size-${product._id}" value="">
+                    </div>
+                    <div class="buttons-container">
+                        <button onclick="addToCart('${product._id}')">Add to Cart</button>
+                        <button class="virtual-try-on" onclick="virtualTryOn('${product._id}')">Virtual Try-On</button>
+                    </div>
+                `;
+                productGrid.appendChild(productCard);
+
+                // Setup size buttons for the newly added product card
+                setupSizeButtons(product._id);
+            });
+
+        } catch (err) {
+            productGrid.innerHTML = `<p>Error loading products: ${err.message}</p>`;
+            console.error('Error in loadProducts:', err);
+        }
+    }
+
+    async function addToCart(productId) {
+        const customerId = getCustomerId();
+        if (!customerId) {
+            alert('Please log in as a customer to add items to your cart.');
+            window.location.href = 'customerloginpage.html';
+            return;
+        }
+
+        const selectedSizeInput = document.getElementById(`selected-size-${productId}`);
+        const selectedSize = selectedSizeInput ? selectedSizeInput.value : '';
+
+        if (!selectedSize) {
+            alert('Please select a size before adding to cart.');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/cart`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ customerId, productId, quantity: 1, size: selectedSize }), // Pass selected size
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                alert(`"product added to cart successfully!`);
+            } else {
+                alert('Failed to add item to cart: ' + (data.message || 'Unknown error'));
+                console.error('Error from backend when adding to cart:', data);
+            }
+        } catch (error) {
+            console.error('Network or fetch error while adding to cart:', error);
+            alert('An error occurred while adding to cart. Please check your network and server connection.');
+        }
+    }
+
+    // MODIFIED: virtualTryOn function now finds the product by ID
+    // MODIFIED: virtualTryOn function now finds the product by ID
+    function virtualTryOn(productId) {
+        const productToTry = products.find(p => p._id === productId);
+        if (productToTry) {
+            // Store the entire product object in localStorage
+            localStorage.setItem('virtualTryOnProduct', JSON.stringify(productToTry));
+            // Open the new virtual_try_on.html page
+            window.open('virtual_try_on.html', '_blank'); // IMPORTANT: changed from .p to .html
+        } else {
+            alert("Product data not found for virtual try-on. Please try again.");
+            console.error("Product with ID:", productId, "not found in loaded products array.");
+        }
+    }
+    
+
+    function openSizeChart() {
+      window.open('size_chart.html', '_blank');
+    }
+
+    async function searchProduct() {
+        const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+        const productGrid = document.getElementById('productGrid');
+        productGrid.innerHTML = 'Searching...';
+
+        try {
+            const foundProducts = products.filter(product =>
+                product.name.toLowerCase().includes(searchTerm) ||
+                (product.description && product.description.toLowerCase().includes(searchTerm)) ||
+                (product.category && product.category.toLowerCase().includes(searchTerm))
+            );
+
+            if (foundProducts.length === 0) {
+                productGrid.innerHTML = '<p>No products found matching your search term.</p>';
+                return;
+            }
+
+            productGrid.innerHTML = '';
+            foundProducts.forEach((product) => {
+                const productCard = document.createElement('div');
+                productCard.classList.add('product-card');
+
+                const imageUrl = product.imageData || 'https://via.placeholder.com/200?text=No+Image';
+
+                productCard.innerHTML = `
+                    <img src="${imageUrl}" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <p>Category: ${product.category || 'N/A'}</p>
+                    <p>${product.description || 'No description provided.'}</p>
+                    <p class="price">$${parseFloat(product.price).toFixed(2)}</p>
+                    <div class="size-selection-container">
+                        <label>Select Size:</label>
+                        <div class="size-buttons">
+                            <button type="button" class="size-button" data-size="XS">XS</button>
+                            <button type="button" class="size-button" data-size="S">S</button>
+                            <button type="button" class="size-button" data-size="M">M</button>
+                            <button type="button" class="size-button" data-size="L">L</button>
+                            <button type="button" class="size-button" data-size="XL">XL</button>
+                            <button type="button" class="size-button" data-size="XXL">XXL</button>
+                        </div>
+                        <button type="button" class="size-chart-button" onclick="openSizeChart()">Size Chart</button>
+                        <input type="hidden" id="selected-size-${product._id}" value="">
+                    </div>
+                    <div class="buttons-container">
+                        <button onclick="addToCart('${product._id}')">Add to Cart</button>
+                        <button class="virtual-try-on" onclick="virtualTryOn('${product._id}')">Virtual Try-On</button>
+                    </div>
+                `;
+                productGrid.appendChild(productCard);
+
+                // Setup size buttons for the newly added product card after search
+                setupSizeButtons(product._id);
+            });
+        } catch (err) {
+            productGrid.innerHTML = `<p>Error during search: ${err.message}</p>`;
+            console.error('Error in searchProduct:', err);
+        }
+    }
+
+    window.addEventListener('load', loadProducts);
+</script>
+</body>
+</html>

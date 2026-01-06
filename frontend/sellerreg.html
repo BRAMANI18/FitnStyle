@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Seller Registration</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-image: url('shop-bg.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      color: #333;
+    }
+
+    .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #34495e;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white; /* Keep the emoji white */
+}
+
+.brand-name {
+  color: #74ebd5; /* Apply brand color only to text */
+}
+
+
+    .form-container {
+      max-width: 500px;
+      margin: 60px auto;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #e91e63;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .error {
+      border-color: red;
+    }
+
+    .error-message {
+      color: red;
+      font-size: 0.9em;
+    }
+
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1rem;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #d81b60;
+    }
+
+    p.login-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9rem;
+    }
+
+    p.login-link a {
+      color: #e91e63;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    p.login-link a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .form-container {
+        margin: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+  <div class="logo">🛒 <span class="brand-name">FIT AND STYLE</span></div>
+</header>
+
+  <div class="form-container">
+    <h2>Seller Registration</h2>
+    <form id="registrationForm">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required />
+      <div class="error-message"></div>
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required />
+      <div class="error-message"></div>
+
+      <label for="gender">Gender:</label>
+      <select id="gender" name="gender" required>
+        <option value="">Select</option>
+        <option value="female">Female</option>
+        <option value="male">Male</option>
+      </select>
+      <div class="error-message"></div>
+
+      <label for="password">Create Password:</label>
+      <input type="password" id="password" name="password" required />
+      <div class="error-message"></div>
+
+      <label for="confirmPassword">Re-enter Password:</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" required />
+      <div class="error-message"></div>
+
+      <button type="submit">Register as Seller</button>
+    </form>
+
+    <p class="login-link">
+      Already a seller?
+      <a href="sellerloginpage.html">Sign in here</a>
+    </p>
+  </div>
+
+  <script>
+    const form = document.getElementById('registrationForm');
+
+    function validateField(input) {
+      const errorDiv = input.nextElementSibling;
+      const name = input.name;
+      const value = input.value.trim();
+
+      if (!value) {
+        input.classList.add('error');
+        errorDiv.textContent = 'This field is required.';
+        return false;
+      }
+
+      if (name === 'confirmPassword') {
+        const passwordInput = form.querySelector('input[name="password"]');
+        if (value !== passwordInput.value) {
+          input.classList.add('error');
+          errorDiv.textContent = 'Passwords do not match.';
+          return false;
+        }
+      }
+
+      input.classList.remove('error');
+      errorDiv.textContent = '';
+      return true;
+    }
+
+    form.querySelectorAll('input, select').forEach((input) => {
+      if (input.tagName.toLowerCase() === 'select') {
+        input.addEventListener('change', () => validateField(input));
+      } else {
+        input.addEventListener('blur', () => validateField(input));
+      }
+    });
+
+    form.addEventListener('submit', async (event) => { // Added 'async'
+      event.preventDefault();
+      let allValid = true;
+
+      form.querySelectorAll('input, select').forEach((input) => {
+        const valid = validateField(input);
+        if (!valid) allValid = false;
+      });
+
+      if (allValid) {
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        // The 'gender' field is not part of your backend User model.
+        // You can choose to include it in the User model if you need to store it,
+        // or simply not send it to the backend for registration.
+        // For now, I'll exclude it from the data sent to the backend as your backend User model doesn't have it.
+        const password = document.getElementById('password').value;
+
+        // Data to send to your backend
+        const userData = {
+          name: name,
+          email: email,
+          password: password,
+          role: 'seller' // Explicitly set role for seller registration
+        };
+
+        try {
+          const response = await fetch('http://localhost:5000/api/auth/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData),
+          });
+
+          const data = await response.json(); // Parse the JSON response from the server
+
+          if (response.ok) { // Check if status is 2xx
+            alert(data.message); // e.g., "User registered successfully"
+            window.location.href = 'sellerloginpage.html';
+          } else {
+            // Handle errors from the server (e.g., duplicate email)
+            alert('Registration failed: ' + (data.message || 'Unknown error'));
+          }
+        } catch (error) {
+          console.error('Error during registration:', error);
+          alert('An error occurred during registration. Please try again.');
+        }
+
+        // Clear form after attempt (whether successful or not, for a clean slate)
+        form.reset();
+        form.querySelectorAll('.error').forEach((el) => el.classList.remove('error'));
+        form.querySelectorAll('.error-message').forEach((div) => (div.textContent = ''));
+      } else {
+        const firstError = form.querySelector('.error');
+        if (firstError) firstError.focus();
+      }
+    });
+  </script>
+</body>
+</html>

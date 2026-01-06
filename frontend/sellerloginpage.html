@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Seller Login</title>
+  <style>
+   body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-image: url('shop-bg.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      color: #333;
+    }
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #34495e;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap;
+}
+
+.logo {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  margin: 0;
+}
+
+.brand-name {
+  color: #74ebd5;
+  margin-left: 8px;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+
+    .login-box {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #e91e63;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      gap: 10px;
+    }
+
+    button {
+      flex: 1;
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    button:hover {
+      background-color: #d81b60;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+   <header class="header">
+    <h1 class="logo">🛒 <span class="brand-name">FIT AND STYLE</span></h1>
+  </header>
+<main class="main-content">
+  <div class="login-box">
+    <h2>Seller Login</h2>
+    <form id="sellerLoginForm">
+      <label for="email">Email:</label> <input type="email" id="email" required /> <label for="password">Password:</label>
+      <input type="password" id="password" required />
+
+      <div class="button-group">
+        <button type="submit">Login</button>
+        <button type="button" onclick="logout()">Logout</button>
+      </div>
+      <div class="error" id="errorMsg"></div>
+    </form>
+  </div>
+</main>
+
+  <script>
+    const form = document.getElementById('sellerLoginForm');
+    const errorMsg = document.getElementById('errorMsg');
+
+    form.addEventListener('submit', async (e) => { // Added 'async'
+      e.preventDefault();
+      const emailInput = document.getElementById('email').value.trim(); // Get email
+      const passwordInput = document.getElementById('password').value;
+
+      try {
+        const response = await fetch('http://localhost:5000/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email: emailInput, password: passwordInput }), // Send email and password
+        });
+
+        const data = await response.json();
+
+        if (response.ok) { // Check if status is 2xx
+          // Store logged-in user info (name, email, role) in localStorage
+          // IMPORTANT: In a real app, use a JWT token for secure session management
+          localStorage.setItem('loggedInUser', JSON.stringify(data.user)); // Store the user object from the backend
+          alert(data.message); // e.g., "Login successful"
+          window.location.href = 'multysellerhome.html'; // Redirect to seller dashboard
+        } else {
+          // Display error message from the server
+          errorMsg.textContent = data.message || 'Login failed. Please try again.';
+        }
+      } catch (error) {
+        console.error('Error during login:', error);
+        errorMsg.textContent = 'An error occurred during login. Please try again.';
+      }
+    });
+
+    function logout() {
+      // Clear the logged-in user's session data for sellers
+      localStorage.removeItem('loggedInUser');
+      // For other pages that might check 'loggedInSeller', clear it too for safety
+      localStorage.removeItem('loggedInSeller'); // Keep this if other pages still check it
+      alert('Logged out successfully!');
+      window.location.href = 'multy.html'; // Redirect to home page or login
+    }
+  </script>
+</body>
+</html>

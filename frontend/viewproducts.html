@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Products Dashboard</title>
+  <style>
+    /* General Styles */
+    body {
+  margin: 0;
+  font-family: sans-serif;
+}
+
+/* HEADER STYLING */
+.main-header {
+  background-color: #2f4454;
+  color: #68f0d8;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.main-header .logo {
+  display: flex;
+  align-items: center;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.main-header .logo i {
+  font-size: 30px;
+  margin-right: 10px;
+}
+
+/* MAIN CONTAINER */
+.main-container {
+  padding: 20px;
+  background: linear-gradient(to right, #80eecf, #9ac8e4);
+  min-height: 100vh;
+}
+
+/* Adjust your product table styles below */
+.product-section {
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+}
+
+
+
+.logo {
+  font-size: 3rem;
+  font-weight: bold;
+  color: white;
+  margin: 0;
+  display: inline-block;
+}
+
+.brand-name {
+  color: #74ebd5;
+  margin-left: 10px;
+}
+
+
+    .container {
+  background: white;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  width: 1000px;
+  max-width: 100vw;
+  margin-top: 30px; /* Add this */
+}
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 25px;
+    }
+
+    /* Table Styles */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      overflow: hidden; /* Ensures rounded corners apply to content */
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px 15px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background-color: #4CAF50; /* Green header */
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    tr:hover {
+      background-color: #e9e9e9;
+    }
+
+    td img {
+      display: block;
+      margin: 0 auto;
+      border-radius: 5px;
+    }
+
+    /* Action Buttons */
+    .edit-btn, .delete-btn {
+      background-color: #2196F3; /* Blue */
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    .delete-btn {
+      background-color: #f44336; /* Red */
+    }
+
+    .edit-btn:hover { background-color: #0b7dda; }
+    .delete-btn:hover { background-color: #da190b; }
+
+    /* Modal Styles */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      padding-top: 60px;
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto; /* 5% from the top and centered */
+      padding: 30px;
+      border: 1px solid #888;
+      width: 80%; /* Could be more responsive */
+      max-width: 500px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      position: relative; /* For close button positioning */
+    }
+
+    .close-button {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      position: absolute;
+      top: 10px;
+      right: 20px;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .modal-content h3 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .modal-content label {
+      display: block;
+      margin-top: 10px;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    .modal-content input[type="text"],
+    .modal-content input[type="number"],
+    .modal-content textarea,
+    .modal-content select {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    .modal-content textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .modal-content button[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    .modal-content button[type="submit"]:hover {
+      background-color: #45a049;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+        width: 95%;
+      }
+      th, td {
+        padding: 8px 10px;
+        font-size: 14px;
+      }
+      .modal-content {
+        width: 95%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="main-header">
+    <div class="logo">
+      <i class="fas fa-shopping-cart"></i>
+      <h1 class="logo">🛒 <span class="brand-name">FIT AND STYLE</span></h1>
+    </div>
+  </header>
+
+<div class="main-container">
+    <!-- Your table or product content here -->
+    <div class="product-section">
+  <div class="container">
+    <h2>My Products</h2>
+    <table id="productTable">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Category</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="productList">
+        </tbody>
+    </table>
+  </div>
+
+  <div id="editProductModal" class="modal">
+    <div class="modal-content">
+      <span class="close-button" onclick="closeModal()">&times;</span>
+      <h3>Edit Product</h3>
+      <form id="editProductForm">
+        <label for="editProductName">Product Name:</label>
+        <input type="text" id="editProductName" required />
+
+        <label for="editProductPrice">Price:</label>
+        <input type="number" id="editProductPrice" step="0.01" required />
+
+        <label for="editProductCategory">Category:</label>
+        <select id="editProductCategory" required>
+          <option value="">Select Category</option>
+          <option value="Jeans">Jeans</option>
+          <option value="T-shirt">T-shirt</option>
+          <option value="SHIRT">SHIRT</option>
+          
+        </select>
+
+        <label for="editProductDescription">Description:</label>
+        <textarea id="editProductDescription"></textarea>
+
+        <label for="editProductImage">Product Image (Leave blank to keep current):</label>
+        <input type="file" id="editProductImage" accept="image/*" />
+
+        <button type="submit">Save Changes</button>
+      </form>
+    </div>
+  </div>
+</div>
+  
+
+  <script>
+    const API_URL = 'http://localhost:5000/api/products';
+    let editProductId = null; // To store the ID of the product being edited
+    const editProductForm = document.getElementById('editProductForm');
+
+    // Helper function to get seller ID from localStorage
+    function getSellerId() {
+        const loggedInUser = localStorage.getItem('loggedInUser');
+        if (loggedInUser) {
+            try {
+                const user = JSON.parse(loggedInUser);
+                if (user.role === 'seller' && user._id) {
+                    // Handle both ObjectId format and direct string ID
+                    if (typeof user._id === 'object' && user._id.$oid) {
+                        return user._id.$oid;
+                    } else if (typeof user._id === 'string') {
+                        return user._id;
+                    }
+                }
+                console.warn("Logged in user is not a seller or _id format is incorrect.");
+                return null;
+            } catch (e) {
+                console.error("Error parsing loggedInUser from localStorage:", e);
+                return null;
+            }
+        }
+        return null;
+    }
+
+    // Function to fetch and display products for the logged-in seller
+    async function fetchProducts() {
+      const productList = document.getElementById('productList');
+      productList.innerHTML = '<tr><td colspan="6">Loading your products...</td></tr>';
+
+      const sellerId = getSellerId();
+      if (!sellerId) {
+          productList.innerHTML = '<tr><td colspan="6">Please log in as a seller to view your products.</td></tr>';
+          // Optionally redirect to login page if not logged in as seller
+          // window.location.href = 'sellerloginpage.html';
+          return;
+      }
+
+      try {
+        // Fetch products, now including the sellerId as a query parameter
+        const res = await fetch(`${API_URL}?sellerId=${sellerId}`);
+        if (!res.ok) throw new Error('Failed to fetch products');
+        const products = await res.json();
+
+        if (products.length === 0) {
+          productList.innerHTML = '<tr><td colspan="6">You have not added any products yet.</td></tr>';
+          return;
+        }
+
+        productList.innerHTML = ''; // Clear loading message
+        products.forEach((product) => {
+          const row = `
+            <tr>
+              <td><img src="${product.imageData || 'https://via.placeholder.com/50?text=No+Image'}" alt="${product.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;"></td>
+              <td>${product.name}</td>
+              <td>$${parseFloat(product.price).toFixed(2)}</td>
+              <td>${product.category}</td>
+              <td>${product.description ? product.description.substring(0, 50) + (product.description.length > 50 ? '...' : '') : 'N/A'}</td>
+              <td>
+                <button onclick="editProduct('${product._id}')" class="edit-btn">Edit</button>
+                <button onclick="deleteProduct('${product._id}')" class="delete-btn">Delete</button>
+              </td>
+            </tr>
+          `;
+          productList.innerHTML += row;
+        });
+      } catch (err) {
+        productList.innerHTML = `<tr><td colspan="6">Error loading products: ${err.message}</td></tr>`;
+        console.error('Error fetching products:', err);
+      }
+    }
+
+    // Function to open the edit modal and populate fields
+    async function editProduct(productId) {
+      editProductId = productId;
+      try {
+        const res = await fetch(`${API_URL}/${productId}`);
+        if (!res.ok) throw new Error('Failed to fetch product for editing.');
+        const product = await res.json();
+
+        // Populate the modal fields with current product data
+        document.getElementById('editProductName').value = product.name;
+        document.getElementById('editProductPrice').value = product.price;
+        document.getElementById('editProductCategory').value = product.category;
+        document.getElementById('editProductDescription').value = product.description;
+        // For image, we can't pre-fill a file input. You might show a preview of current image.
+        // For simplicity, user will upload a new image or leave blank to keep old.
+
+        document.getElementById('editProductModal').style.display = 'block'; // Show the modal
+      } catch (err) {
+        alert('Error fetching product for editing: ' + err.message);
+        console.error('Error in editProduct:', err);
+      }
+    }
+
+    // Function to close the modal
+    function closeModal() {
+      document.getElementById('editProductModal').style.display = 'none';
+      editProductForm.reset(); // Clear form fields when closing
+      editProductId = null; // Reset the edited product ID
+    }
+
+    // Helper function to convert image file to Base64
+    async function getImageBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Function to handle product update submission
+    editProductForm.addEventListener('submit', async (e) => {
+      e.preventDefault(); // Prevent default form submission
+
+      if (!editProductId) {
+        alert('No product selected for editing.');
+        return;
+      }
+
+      const name = document.getElementById('editProductName').value;
+      const price = parseFloat(document.getElementById('editProductPrice').value);
+      const category = document.getElementById('editProductCategory').value;
+      const description = document.getElementById('editProductDescription').value;
+      const imageFile = document.getElementById('editProductImage').files[0];
+
+      let imageData = '';
+      if (imageFile) {
+        if (!imageFile.type.startsWith('image/')) {
+          alert('Please select a valid image file.');
+          return;
+        }
+        imageData = await getImageBase64(imageFile);
+      }
+
+      const updatedProduct = {
+        name,
+        price, // parseFloat already done
+        category,
+        description,
+        ...(imageData && { imageData }) // Only include imageData if a new one is provided
+      };
+
+      try {
+        const res = await fetch(`${API_URL}/${editProductId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedProduct)
+        });
+
+        if (!res.ok) throw new Error('Update failed.');
+        alert('Product updated successfully!');
+        closeModal();
+        fetchProducts(); // Refresh the list to show updated product
+      } catch (err) {
+        alert('Error updating product: ' + err.message);
+        console.error('Error in updateProduct:', err);
+      }
+    });
+
+    // Function to delete a product
+    async function deleteProduct(productId) {
+      if (!confirm('Are you sure you want to delete this product?')) return; // Confirmation dialog
+      try {
+        const res = await fetch(`${API_URL}/${productId}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Delete failed.');
+        alert('Product deleted successfully!');
+        fetchProducts(); // Refresh the list after deletion
+      } catch (err) {
+        alert('Error deleting product: ' + err.message);
+        console.error('Error deleting product:', err);
+      }
+    }
+
+    // Close the modal if user clicks outside of it
+    window.onclick = function (event) {
+      const modal = document.getElementById('editProductModal');
+      if (event.target == modal) {
+        closeModal();
+      }
+    };
+
+    // Initial load of products when the page loads
+    window.addEventListener('load', fetchProducts);
+  </script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Size Chart - Virtual Fitting Room</title>
+  <script src="https://dev.wearfits.com/static/js/wearfits.fr.bundle.min.js"></script>
+  <script src="https://dev.wearfits.com/static/js/virtual_advisor.js"></script>
+  <style>
+    body, html {
+  height: 100%;
+  background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+}
+
+.main-content {
+  padding-top: 100px; /* Creates space below the sticky header */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: calc(100vh - 60px); /* Adjust as per your header height */
+}
+
+     .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #34495e;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white; /* Keep the emoji white */
+}
+
+.brand-name {
+  color: #74ebd5; /* Apply brand color only to text */
+}
+
+
+    
+    #advisor_container {
+      width: 450px;
+      max-width: 90%; /* Responsive width */
+      height: 80%; /* Adjust height as needed */
+      background: white;
+      margin: 20px auto; /* Add some margin top/bottom */
+      padding: 20px;
+      box-sizing: border-box;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+      border-radius: 8px;
+    }
+
+    .back-button-container {
+      margin-top: 20px; /* Space between advisor and button */
+      text-align: center;
+    }
+
+    .back-button {
+      padding: 10px 20px;
+      background-color: #34495e; /* Matching header color from multy.html */
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .back-button:hover {
+      background-color: #2c3e50; /* Darker shade on hover */
+    }
+
+    /* Basic responsiveness for advisor container */
+    @media (max-width: 600px) {
+      #advisor_container {
+        height: 70%; /* Adjust height for smaller screens */
+      }
+    }
+  </style>
+  <script>
+    // Initialize the virtual advisor when the document loads
+    async function onDocumentLoad() {
+      // Configure virtual advisor settings
+      wearfits_va.use_outline = true;
+      wearfits_va.custom_fit_func = customFitFunc;
+      wearfits_va.default_mode_ratio = 1.5;
+      
+      // Initialize advisor UI
+      wearfits_va.append("advisor_container");
+      await wearfits_va.set_up_garment_by_prop(demo_garment);
+      await wearfits_va.set_visualization();
+    }
+
+    // Custom fit calculation function
+    async function customFitFunc() {
+      // Your custom fit logic here
+    }
+
+    // Demo garment data
+    const demo_garment = {
+      name: "DEMO DRESS",
+      product_type: "DRESS",
+      gender: "w",
+      sizes: [
+  { name: "XS", chest: 81, waist: 63, buttock: 88, length: 90 },
+  { name: "S",  chest: 86, waist: 68, buttock: 93, length: 92 },
+  { name: "M",  chest: 91, waist: 73, buttock: 98, length: 94 },
+  { name: "L",  chest: 97, waist: 79, buttock: 104, length: 96 },
+  { name: "XL", chest: 103, waist: 85, buttock: 110, length: 98 }
+]
+    };
+
+    // Function to close the current window/tab
+    function goBackToShop() {
+      window.close();
+    }
+
+    // Initialize when DOM is ready
+    document.addEventListener('DOMContentLoaded', onDocumentLoad);
+  </script>
+</head>
+
+<body>
+  
+  <header class="header">
+    <h1 class="logo">🛒 <span class="brand-name">FIT AND STYLE</span></h1>
+  </header>
+<main class="main-content">
+
+  <div id="advisor_container"></div>
+  <div class="back-button-container">
+    <button class="back-button" onclick="goBackToShop()">Go Back to Shop</button>
+  </div>
+</main>
+</body>
+
+</html>

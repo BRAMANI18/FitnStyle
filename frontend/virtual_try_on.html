@@ -1,0 +1,269 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  body {
+    margin: 0;
+    background: linear-gradient(to bottom right, #73e6cc, #a3d8f4);
+    font-family: Arial, sans-serif;
+  }
+
+  .header {
+    background-color: #2c3e50;
+    padding: 20px;
+    color: #66ffe0;
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+  }
+
+  .header i {
+    margin-right: 10px;
+    font-size: 28px;
+  }
+</style>
+
+  <title>WEARFITS: Advanced Apparel Try-On and Size Fitting Demo</title>
+
+  <!-- Include WEARFITS JavaScript SDK -->
+  <script type="text/javascript" src="https://dev.wearfits.com/static/js/wearfits.fr.bundle.min.js"></script>
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    wearfits.init('wearfits_viewer');
+  });
+</script>
+
+
+  <script>
+    wearfits.showRayTracingButton = false;
+    wearfits.showARButton = false;
+    wearfits.showMaterialPresets = false;
+    wearfits.showSizeSelectionUI = false;
+    wearfits.showAvatarSelectionUI = false;
+    wearfits.showComfortMapButton = false;
+
+    async function update_garment(index) {
+      const height = parseFloat(window.height.value);
+      const chest = parseFloat(window.chest.value);
+      const waist = parseFloat(window.waist.value);
+      const buttock = parseFloat(window.buttock.value);
+
+      const garment_name = window[`garment_list_${index}`].value;
+      const size_list_element = window[`size_list_${index}`];
+      const color_list_element = window[`color_list_${index}`];
+      const prefered_size_element = window[`prefered_size_${index}`];
+
+      if (!garment_name) return;
+
+      try {
+        wearfits.userParams.height = height;
+        wearfits.userParams.chest = chest;
+        wearfits.userParams.waist = waist;
+        wearfits.userParams.buttock = buttock;
+
+        await wearfits.getGarmentDataFromServer(garment_name);
+        prefered_size_element.innerHTML = wearfits.getPreferedSize(garment_name);
+        update_size_list(size_list_element, garment_name);
+
+        const avatar_id = await wearfits.getAvatarHashFromServer(height, chest, waist, buttock, null, garment_name);
+        const color = color_list_element.value;
+        const garment_size = size_list_element.value;
+        const garment_id = `${garment_name}_${garment_size}`;
+
+        await wearfits.loadByHashAndId(avatar_id, [{
+          idsize: garment_id,
+          preset: color
+        }]);
+
+        update_color_list(color_list_element, garment_name);
+
+        console.log(`Garment ${index} Loaded:`, garment_id);
+      } catch (err) {
+        console.error(`Failed to update garment ${index}:`, err);
+        wearfits.showToast(`Error loading garment ${index}`, true, 10000);
+      }
+    }
+
+    function update_garment_1() {
+      update_garment(1);
+    }
+
+    function update_garment_2() {
+      update_garment(2);
+    }
+
+    function update_size_list(list_element, garment_name) {
+      if (list_element.garment_name === garment_name) return;
+      list_element.garment_name = garment_name;
+
+      const sizes = wearfits.getGarmentSizes(garment_name);
+      list_element.innerHTML = "";
+      sizes.forEach(size => {
+        const opt = document.createElement('option');
+        opt.value = size;
+        opt.textContent = size;
+        if (size === wearfits.current_garment_size) opt.selected = true;
+        list_element.appendChild(opt);
+      });
+    }
+
+    function update_color_list(list_element, garment_name) {
+      list_element.innerHTML = "";
+      list_element.onchange = null;
+
+      const garment = wearfits.garments.find(g => g.name === garment_name);
+      if (garment) {
+        list_element.onchange = function () {
+          wearfits.loadMaterialSet(this.value, garment);
+        };
+        garment.material_sets.forEach(material_set => {
+          const opt = document.createElement('option');
+          opt.value = material_set.name;
+          opt.textContent = material_set.name;
+          if (material_set.name === garment.preset) opt.selected = true;
+          list_element.appendChild(opt);
+        });
+      }
+    }
+
+    function change_units(unit) {
+      wearfits.units = unit;
+      const ratio = unit === "inch" ? 1 / 2.54 : 2.54;
+      height.value = (parseFloat(height.value) * ratio).toFixed(2);
+      chest.value = (parseFloat(chest.value) * ratio).toFixed(2);
+      waist.value = (parseFloat(waist.value) * ratio).toFixed(2);
+      buttock.value = (parseFloat(buttock.value) * ratio).toFixed(2);
+      shoulders.value = (parseFloat(shoulders.value) * ratio).toFixed(2);
+      thigh.value = (parseFloat(thigh.value) * ratio).toFixed(2);
+      calf.value = (parseFloat(calf.value) * ratio).toFixed(2);
+    }
+  </script>
+
+  <style>
+       body {
+  height: 100%;
+  background: linear-gradient(135deg, #ACB6E5 100%);
+}
+
+.main-content {
+  padding-top: 100px; /* Creates space below the sticky header */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: calc(100vh - 60px); /* Adjust as per your header height */
+}
+
+     .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #34495e;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white; /* Keep the emoji white */
+}
+
+.layout-box {
+    background-color: white;
+    padding: 20px;
+    margin: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+ 
+    .box {
+      padding: 7px;
+      margin: 15px;
+      border-top: 1px solid black;
+    }
+  </style>
+</head>
+
+<body>
+
+    <header class="header">
+    <h1 class="logo">🛒 FIT AND STYLE</h1>
+  </header>
+
+  <div id="wrapper">
+    <div class="content" style="display: flex; height: 100vh;">
+      <div id="wearfits_viewer" style="width: 50%; height: 100%;"></div>
+
+      <div style="width: 50%; height: 100%; padding: 15px; overflow-y: auto;">
+        <div class="layout-box">
+        <div class="box">
+          <div>
+            Units
+            <select onchange="change_units(this.value);">
+              <option value="cm">cm</option>
+              <option value="inch">inch</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="box">
+          <b>Avatar Measurements</b>
+          <div>Height: <input type="number" id="height" value="165" step="0.1"></div>
+          <div>Chest: <input type="number" id="chest" value="88" step="0.1"></div>
+          <div>Waist: <input type="number" id="waist" value="70" step="0.1"></div>
+          <div>Buttock: <input type="number" id="buttock" value="94" step="0.1"></div>
+          <div>Shoulders: <input type="number" id="shoulders" value="0" step="0.1" readonly></div>
+          <div>Thigh: <input type="number" id="thigh" value="0" step="0.1" readonly></div>
+          <div>Calf: <input type="number" id="calf" value="0" step="0.1" readonly></div>
+          <div><button onclick="update_garment_1(); update_garment_2();" 
+    style="background-color: #5d8cde; color: white; padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer;">
+    Update Avatar and Garments
+  </button>
+</div>
+
+        </div>
+
+        <div class="box">
+          <div>Garment Select 1:
+            <select id="garment_list_1" onchange="update_garment_1()">
+              <option value="" selected>None</option>
+              <option value="pant">Pant</option>
+              <option value="CLONIFY FLORAL SHORTS">CLONIFY Floral Shorts</option>
+              <option value="CLONIFY FLORAL TOP">CLONIFY Floral Top</option>
+              <option value="CLONIFY WOMAN JEANSY">CLONIFY Woman Jeansy</option>
+              <option value="CLONIFY WOMAN SWEATER">CLONIFY Woman Sweater</option>
+              <option value="CLONIFY STRIPED DENIM JEANS">CLONIFY Striped Denim Jeans</option>
+              <option value="CLONIFY WOMEN DENIM SHORTS">CLONIFY Women Denim Shorts</option>
+              <option value="ShirtH">ShirtH</option>
+              <option value="CLONIFY MAN PANTS">CLONIFY Man Pants</option>
+              <option value="CLONIFY MAN SWEATER">CLONIFY Man Sweater</option>
+              <option value="CLONIFY WHITE T-SHIRT">CLONIFY White T-Shirt</option>
+              <option value="CLONIFY MEN WHITE SHIRT">CLONIFY Men White Shirt</option>
+              <option value="CLONIFY MAN PANT">CLONIFY Man Pant</option>
+              <option value="CLONIFY MAN GANT GREY PANT">CLONIFY Man Gant Grey Pant</option>
+            </select>
+          </div>
+          </div>
+          <div>Select Size 1: <select id="size_list_1" onchange="update_garment_1()"></select></div>
+          <div>Select Color 1: <select id="color_list_1"></select></div>
+          <div>Preferred Size 1: <span id="prefered_size_1"></span></div>
+        </div>
+
+       
+         
+       
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

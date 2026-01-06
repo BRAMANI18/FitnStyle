@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Add Product</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  body, html {
+  height: 100%;
+  background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+}
+
+.main-content {
+  padding-top: 100px; /* Creates space below the sticky header */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: calc(100vh - 60px); /* Adjust as per your header height */
+}
+
+     .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #34495e;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white; /* Keep the emoji white */
+}
+
+.brand-name {
+  color: #74ebd5; /* Apply brand color only to text */
+}
+
+  .container {
+    background: white;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    width: 360px;
+    max-width: 90vw;
+  }
+  h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #444;
+  }
+  form input[type="text"],
+  form input[type="number"],
+  form input[type="file"],
+  form select,
+  form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1em;
+  }
+  form textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  form button {
+    background-color: #4CAF50; /* Green submit button */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    width: 100%;
+    transition: background-color 0.3s ease;
+  }
+  form button:hover {
+    background-color: #45a049;
+  }
+  .view-products-link {
+    display: block;
+    margin-top: 15px;
+    text-align: center;
+    color: #007BFF;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .view-products-link:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+  
+   <header class="header">
+    <h1 class="logo">🛒 <span class="brand-name">FIT AND STYLE</span></h1>
+  </header>
+<main class="main-content">
+  <div class="container">
+    <h2>Add New Product</h2>
+    <form id="addProductForm">
+      <label for="name">Product Name:</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="price">Price:</label>
+      <input type="number" id="price" name="price" step="0.01" required />
+
+      <label for="category">Category:</label>
+      <select id="category" name="category" required>
+        <option value="">Select Category</option>
+        <option value="Jeans">Jeans</option>
+        <option value="T-shirt">T-shirt</option>
+        <option value="SHIRT">SHIRT</option>
+        
+      </select>
+
+      <label for="description">Description (Optional):</label>
+      <textarea id="description" name="description"></textarea>
+
+      <label for="image">Product Image:</label>
+      <input type="file" id="image" name="image" accept="image/*" />
+
+      <button type="submit">Add Product</button>
+    </form>
+
+    <a href="viewproducts.html" class="view-products-link">View Products</a>
+  </div>
+</main>
+
+  <script>
+  // ... (previous JavaScript code)
+
+  // Correctly get form and input elements by their actual IDs
+  const addProductForm = document.getElementById('addProductForm');
+  const nameInput = document.getElementById('name');
+  const priceInput = document.getElementById('price');
+  const categoryInput = document.getElementById('category');
+  const descriptionInput = document.getElementById('description');
+  const imageInput = document.getElementById('image');
+
+  // Helper function to get seller ID from localStorage (similar to getCustomerId)
+  function getSellerId() {
+      const loggedInUser = localStorage.getItem('loggedInUser');
+      if (loggedInUser) {
+          try {
+              const user = JSON.parse(loggedInUser);
+              if (user.role === 'seller' && user._id) { // Ensure user is a seller
+                  if (typeof user._id === 'object' && user._id.$oid) {
+                      return user._id.$oid;
+                  } else if (typeof user._id === 'string') {
+                      return user._id;
+                  }
+              }
+              console.warn("Logged in user is not a seller or _id format is incorrect.");
+              return null;
+          } catch (e) {
+              console.error("Error parsing loggedInUser from localStorage:", e);
+              return null;
+          }
+      }
+      return null;
+  }
+
+  // Attach the event listener to the correctly identified form
+  addProductForm.addEventListener('submit', async (e) => { // Changed productForm to addProductForm
+    e.preventDefault();
+
+    const sellerId = getSellerId();
+    if (!sellerId) {
+        alert('You must be logged in as a seller to add products.');
+        window.location.href = 'sellerloginpage.html'; // Redirect to seller login
+        return;
+    }
+
+    // Use the correctly identified input elements to get values
+    const name = nameInput.value; // Changed document.getElementById('productName') to nameInput
+    const price = parseFloat(priceInput.value); // Changed document.getElementById('productPrice') to priceInput
+    const category = categoryInput.value; // Changed document.getElementById('productCategory') to categoryInput
+    const description = descriptionInput.value; // Changed document.getElementById('productDescription') to descriptionInput
+    const imageFile = imageInput.files[0]; // Changed document.getElementById('productImage') to imageInput
+
+    let imageData = '';
+    if (imageFile) {
+      if (!imageFile.type.startsWith('image/')) {
+        alert('Please select a valid image file.');
+        return;
+      }
+      imageData = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.readAsDataURL(imageFile);
+      });
+    }
+
+    // Prepare product data with sellerId
+    const productData = {
+      name: name,
+      price: price,
+      category: category,
+      description: description,
+      imageData: imageData,
+      sellerId: sellerId // Include the seller's ID here
+    };
+
+    try {
+      const response = await fetch('http://localhost:5000/api/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(productData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data.message || 'Product added successfully!');
+        addProductForm.reset(); // Changed form.reset() to addProductForm.reset()
+        window.location.href = 'viewproducts.html'; // Redirect to view products
+      } else {
+        alert('Error adding product: ' + (data.message || 'Unknown error'));
+        console.error('Backend product add error:', data);
+      }
+    } catch (error) {
+      console.error('Network or fetch error during product add:', error);
+      alert('An error occurred while adding the product. Please check your network and backend server.');
+    }
+  });
+
+  // ... (rest of your JavaScript code)
+</script>
+</body>
+</html>
